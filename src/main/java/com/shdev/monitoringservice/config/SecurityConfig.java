@@ -50,20 +50,20 @@ public class SecurityConfig {
 
             // URL-based authorization rules
             .authorizeHttpRequests(authorize -> authorize
-                // Public endpoints - no authentication required
+                // Actuator endpoints - public for health monitoring
                 .requestMatchers("/actuator/**").permitAll()
+
+                // Public API endpoints (if any)
                 .requestMatchers("/api/public/**").permitAll()
 
-                // Admin endpoints - require ADMIN role
-                .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                // Example role-based rules (uncomment and modify as needed):
+                // .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                // .requestMatchers("/api/user/**").hasAnyRole("ADMIN", "USER")
 
-                // Manager endpoints - require ADMIN or MANAGER role
-                .requestMatchers("/api/manager/**").hasAnyRole("ADMIN", "MANAGER")
-
-                // All other /api/** endpoints - require authentication (any role)
+                // All other /api/** endpoints - require authentication
                 .requestMatchers("/api/**").authenticated()
 
-                // Everything else - require authentication
+                // Default - require authentication
                 .anyRequest().authenticated()
             );
 
