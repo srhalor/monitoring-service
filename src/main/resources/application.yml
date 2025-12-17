@@ -14,6 +14,21 @@ management:
     health:
       show-details: always
 
+security:
+  filter:
+    jwt-enabled: true
+    headers-enabled: true
+    strict-header-mode: true
+    token-validation-url: http://localhost:8090/oauth2/rest/token/info
+    url-patterns:
+      - /*
+    excluded-paths:
+      - /actuator/**
+
 logging:
   level:
-    com.shdev.securityservice: INFO
+    com.shdev.monitoringservice: DEBUG
+    com.shdev.security: DEBUG
+    org.springframework.security: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} [%X{requestId}] [%X{userIdToken}] [%X{userIdHeader}] [%X{originService}] [%X{originApplication}] [%X{client}] - %msg%n"
