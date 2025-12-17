@@ -2,6 +2,8 @@ package com.shdev.monitoringservice.config;
 
 import com.shdev.security.filter.JwtAuthenticationFilter;
 import com.shdev.security.filter.OriginHeadersFilter;
+import com.shdev.security.handler.CustomAccessDeniedHandler;
+import com.shdev.security.handler.CustomAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -43,6 +45,8 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final OriginHeadersFilter originHeadersFilter;
+    private final CustomAccessDeniedHandler accessDeniedHandler;
+    private final CustomAuthenticationEntryPoint authenticationEntryPoint;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -55,6 +59,11 @@ public class SecurityConfig {
             // Stateless session (JWT-based, no session needed)
             .sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
+            // Custom exception handling
+            .exceptionHandling(exceptionHandling -> exceptionHandling
+                .accessDeniedHandler(accessDeniedHandler)
+                .authenticationEntryPoint(authenticationEntryPoint))
 
             // Add custom filters before Spring Security's authentication filters
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
