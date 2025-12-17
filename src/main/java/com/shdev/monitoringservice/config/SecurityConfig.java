@@ -13,14 +13,20 @@ import org.springframework.security.web.SecurityFilterChain;
 /**
  * Spring Security configuration for monitoring-service.
  *
- * <p>Authentication is handled by JwtAuthenticationFilter which:
- * - Validates JWT tokens with security-service
- * - Extracts roles/authorities from JWT payload
- * - Sets Spring Security context with authenticated user and roles
+ * <p><b>Single Source of Truth for Security:</b>
+ * This configuration defines ALL authentication and authorization rules.
+ * Custom filters (JwtAuthenticationFilter, OriginHeadersFilter) only validate credentials
+ * but do NOT make access decisions - Spring Security does that here.
  *
- * <p>Authorization is handled by Spring Security using:
- * - URL-based rules (configured below)
- * - Method-level security annotations (@PreAuthorize, @Secured, etc.)
+ * <p><b>Authentication Flow:</b>
+ * 1. JwtAuthenticationFilter validates JWT tokens with security-service
+ * 2. Extracts roles/authorities from userRole field ("ADMIN:USER")
+ * 3. Sets Spring Security context with authenticated user and roles
+ * 4. Spring Security checks the rules below to allow/deny access
+ *
+ * <p><b>Authorization is handled by:</b>
+ * - URL-based rules (configured below) - e.g., .permitAll(), .hasRole()
+ * - Method-level security annotations - e.g., @PreAuthorize("hasRole('ADMIN')")
  *
  * @author Shailesh Halor
  */

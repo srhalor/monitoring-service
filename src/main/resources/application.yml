@@ -22,8 +22,7 @@ security:
     token-validation-url: http://localhost:8090/oauth2/rest/token/info
     url-patterns:
       - /*
-    excluded-paths:
-      - /actuator/**
+    excluded-paths: []  # Empty - Spring Security handles path-based access control
 
 logging:
   level:
