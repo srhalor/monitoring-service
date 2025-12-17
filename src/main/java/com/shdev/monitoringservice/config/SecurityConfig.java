@@ -1,5 +1,8 @@
 package com.shdev.monitoringservice.config;
 
+import com.shdev.security.filter.JwtAuthenticationFilter;
+import com.shdev.security.filter.OriginHeadersFilter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,6 +12,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
  * Spring Security configuration for monitoring-service.
@@ -34,7 +38,11 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity()  // Enable @PreAuthorize, @PostAuthorize
+@RequiredArgsConstructor
 public class SecurityConfig {
+
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final OriginHeadersFilter originHeadersFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -47,6 +55,10 @@ public class SecurityConfig {
             // Stateless session (JWT-based, no session needed)
             .sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
+            // Add custom filters before Spring Security's authentication filters
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+            .addFilterAfter(originHeadersFilter, JwtAuthenticationFilter.class)
 
             // URL-based authorization rules
             .authorizeHttpRequests(authorize -> authorize

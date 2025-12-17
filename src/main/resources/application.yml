@@ -16,13 +16,10 @@ management:
 
 security:
   filter:
-    jwt-enabled: true
-    headers-enabled: true
-    strict-header-mode: true
     token-validation-url: http://localhost:8090/oauth2/rest/token/info
-    url-patterns:
-      - /*
-    excluded-paths: []  # Empty - Spring Security handles path-based access control
+    strict-header-mode: true
+    excluded-paths:
+      - /actuator/**
 
 logging:
   level:
