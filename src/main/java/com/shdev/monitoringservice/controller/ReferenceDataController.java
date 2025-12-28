@@ -1,7 +1,7 @@
 package com.shdev.monitoringservice.controller;
 
-import com.shdev.omsdatabase.dto.ReferenceDataDto;
 import com.shdev.monitoringservice.service.ReferenceDataService;
+import com.shdev.omsdatabase.dto.ReferenceDataDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -108,7 +108,7 @@ public class ReferenceDataController {
      * Query params: ?historic=true (optional, default=false)
      * Note: Full set is returned; UI handles pagination, sorting, searching client-side.
      *
-     * @param type the reference data type
+     * @param type     the reference data type
      * @param historic if true, returns all records including historical versions; if false (default), returns only active records
      * @return list of reference data DTOs matching the type
      */
