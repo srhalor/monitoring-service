@@ -1,6 +1,23 @@
 spring:
   application:
     name: monitoring-service
+  datasource:
+    url: jdbc:oracle:thin:@//localhost:1521/XEPDB1
+    username: OMSUSER
+    password: omsuserpass
+    driver-class-name: oracle.jdbc.OracleDriver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.OracleDialect
+        use_sql_comments: false
+        globally_quoted_identifiers: false
+        jdbc:
+          time_zone: UTC
 
 server:
   port: 8080
