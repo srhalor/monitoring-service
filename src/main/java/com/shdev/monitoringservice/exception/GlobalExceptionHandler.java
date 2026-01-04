@@ -79,6 +79,44 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Handle InvalidSearchRequestException - returns 400 Bad Request
+     */
+    @ExceptionHandler(InvalidSearchRequestException.class)
+    public ResponseEntity<ErrorResponseDto> handleInvalidSearchRequestException(InvalidSearchRequestException ex, WebRequest request) {
+        log.warn("Invalid search request: {}", ex.getMessage());
+
+        ErrorResponseDto errorResponse = ErrorResponseDto.builder()
+                .timestamp(Instant.now())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .error("Bad Request")
+                .errorDescription("Invalid search request parameters")
+                .message(ex.getMessage())
+                .path(request.getDescription(false).replace("uri=", ""))
+                .build();
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    /**
+     * Handle IllegalArgumentException - returns 400 Bad Request
+     */
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponseDto> handleIllegalArgumentException(IllegalArgumentException ex, WebRequest request) {
+        log.warn("Illegal argument: {}", ex.getMessage());
+
+        ErrorResponseDto errorResponse = ErrorResponseDto.builder()
+                .timestamp(Instant.now())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .error("Bad Request")
+                .errorDescription("Invalid request parameters")
+                .message(ex.getMessage())
+                .path(request.getDescription(false).replace("uri=", ""))
+                .build();
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    /**
      * Handle JPA/Database exceptions
      */
     @ExceptionHandler(JpaSystemException.class)
