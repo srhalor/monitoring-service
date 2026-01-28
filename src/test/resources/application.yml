@@ -1,0 +1,24 @@
+server:
+  port: 0  # Random port for tests
+
+spring:
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+      - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration
+
+# Security configuration for tests
+security:
+  filter:
+    token-validation-url: http://localhost:8090/oauth2/rest/token/info
+    strict-header-mode: false
+    excluded-paths:
+      - /actuator/**
+
+# Logging
+logging:
+  level:
+    com.shdev.monitoringservice: INFO
+    com.shdev.security: WARN
+    org.springframework.security: WARN

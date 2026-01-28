@@ -60,6 +60,70 @@ mvnw.cmd spring-boot:run
 java -jar target/monitoring-service-0.0.1-SNAPSHOT.jar
 ```
 
+### Docker/Podman Deployment
+
+**1. Build JAR**
+```bash
+mvnw.cmd clean package
+```
+
+**2. Build Container Image**
+```bash
+# Using Docker
+docker build -t monitoring-service:0.0.1-SNAPSHOT .
+
+# Using Podman
+podman build -t monitoring-service:0.0.1-SNAPSHOT .
+```
+
+**3. Run Container**
+```bash
+# Using Docker
+docker run -d -p 8080:8080 --name monitoring-service monitoring-service:0.0.1-SNAPSHOT
+
+# Using Podman
+podman run -d -p 8080:8080 --name monitoring-service monitoring-service:0.0.1-SNAPSHOT
+```
+
+**Note**: Ensure security-service is accessible from the container for JWT validation.
+
+**For Docker deployment with database and security-service:**
+```bash
+# Using Docker with environment variables
+docker run -d -p 8080:8080 \
+  -e DB_URL=jdbc:oracle:thin:@//host.docker.internal:1521/XEPDB1 \
+  -e DB_USERNAME=OMSUSER \
+  -e DB_PASSWORD=omsuserpass \
+  -e SECURITY_TOKEN_VALIDATION_URL=http://host.docker.internal:8090/oauth2/rest/token/info \
+  --name monitoring-service \
+  monitoring-service:0.0.1-SNAPSHOT
+
+# Using Podman with environment variables
+podman run -d -p 8080:8080 \
+  -e DB_URL=jdbc:oracle:thin:@//host.containers.internal:1521/XEPDB1 \
+  -e DB_USERNAME=OMSUSER \
+  -e DB_PASSWORD=omsuserpass \
+  -e SECURITY_TOKEN_VALIDATION_URL=http://security-service:8090/oauth2/rest/token/info \
+  --name monitoring-service \
+  monitoring-service:0.0.1-SNAPSHOT
+
+# Or if all services are in the same Podman/Docker network
+podman run -d -p 8080:8080 \
+  --network app-network \
+  -e DB_URL=jdbc:oracle:thin:@//oracle-db:1521/XEPDB1 \
+  -e DB_USERNAME=OMSUSER \
+  -e DB_PASSWORD=omsuserpass \
+  -e SECURITY_TOKEN_VALIDATION_URL=http://security-service:8090/oauth2/rest/token/info \
+  --name monitoring-service \
+  monitoring-service:0.0.1-SNAPSHOT
+```
+
+**Environment Variables:**
+- `DB_URL` - Database JDBC URL (use container name or `host.docker.internal` / `host.containers.internal`)
+- `DB_USERNAME` - Database username
+- `DB_PASSWORD` - Database password
+- `SECURITY_TOKEN_VALIDATION_URL` - Security service token validation endpoint
+
 ### Access
 
 - **Health Check**: http://localhost:8080/actuator/health (public, no auth)
